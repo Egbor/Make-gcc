@@ -32,9 +32,10 @@ TARGETLIBGOODBYE = goodbye
 all: dirs $(patsubst %.c,%.o,$(HELLOSRC)) libs
 	$(CC) $(INCLUDES) $(LIBRERIES) $(RPATH) -o $(TARGETOUTPUT)$(TARGETHELLO).out $(HELLOOBJDIR)*.o -l$(TARGETLIBHELLO) -l$(TARGETLIBGOODBYE)
 
-libs:  $(patsubst %.c,%.o,$(LIBGOODBYESRC)) $(patsubst %.c,%d.o,$(LIBHELLOSRC))
-	$(CC) -shared -o $(TARGETLIBOUTPUT)$(TARGETLIBHELLO).so $(LIBHELLOOBJDIR)*.o
+libs:  $(patsubst %.c,%.o,$(LIBGOODBYESRC)) $(patsubst %.c,%.o,$(LIBHELLOSRC))
+	ar rc $(TARGETLIBOUTPUT)$(TARGETLIBHELLO).a $(LIBHELLOOBJDIR)*.o
 	ar rc $(TARGETLIBOUTPUT)$(TARGETLIBGOODBYE).a $(LIBGOODBYEOBJDIR)*.o
+	ranlib $(TARGETLIBOUTPUT)$(TARGETLIBHELLO).a
 	ranlib $(TARGETLIBOUTPUT)$(TARGETLIBGOODBYE).a
 
 clean:
@@ -51,8 +52,6 @@ dirs:
 
 %.o: %.c
 	$(CC) $(INCLUDES) -c -MD $< -o $(@D)/$(OBJDIR)$(@F)
-%d.o: %.c
-	$(CC) -fPIC -c -MD $< -o $(@D)/$(OBJDIR)$(@F)
  
 include $(wildcard $(HELLOOBJDIR)*.d)
 include $(wildcard $(LIBHELLOOBJDIR)*.d)
